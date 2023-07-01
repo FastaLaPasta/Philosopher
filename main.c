@@ -6,7 +6,7 @@
 /*   By: sashaboulogne <sashaboulogne@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 17:49:48 by sashaboulog       #+#    #+#             */
-/*   Updated: 2023/07/01 18:37:42 by sashaboulog      ###   ########.fr       */
+/*   Updated: 2023/07/01 18:42:23 by sashaboulog      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,6 @@ int main(int argc, char **argv)
         // printf("time to sleep = %d\n", needs.time_to_sleep);
     }
     else
-        printf("Not enough informations to survive !\n");
+        printf("Not enough informations to survive, or too much !?\n");
     return (0);
 }
