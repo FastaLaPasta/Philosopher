@@ -6,18 +6,18 @@
 /*   By: sboulogn <sboulogn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 17:58:41 by sashaboulog       #+#    #+#             */
-/*   Updated: 2023/07/02 17:12:33 by sboulogn         ###   ########.fr       */
+/*   Updated: 2023/07/05 17:06:39 by sboulogn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
 
-void	free_the_table(s_philosopher *table)
+void	free_the_table(t_param *table)
 {
-	t_philosoph	*tmp;
-	t_philosoph *next;
+	t_philo	*tmp;
+	t_philo	*next;
 
-	tmp = table->philosoph;
+	tmp = table->philo;
 	while (table->nbr_of_philosophers > 0)
 	{
 		next = tmp->next;
@@ -27,34 +27,36 @@ void	free_the_table(s_philosopher *table)
 		tmp = next;
 		table->nbr_of_philosophers--;
 	}
+	table->philo = NULL;
 }
 
-t_philosoph	*ft_lstnew(char **argv)
+t_philo	*ft_lstnew(char **argv, int philo_nbr, t_param *tmp)
 {
-	t_philosoph	*ncontent;
+	t_philo	*ncontent;
 
-	ncontent = malloc(sizeof(t_philosoph));
+	ncontent = malloc(sizeof(t_philo));
 	if (!ncontent)
 		return (NULL);
 	if (ncontent)
 	{
 		ncontent->time_to_eat = ft_atoi(argv[3]);
-			if (ncontent->time_to_eat < 1)
-				return (NULL);
+		if (ncontent->time_to_eat < 1)
+			return (NULL);
 		ncontent->time_to_sleep = ft_atoi(argv[4]);
 		if (ncontent->time_to_sleep < 0)
-				return (NULL);
+			return (NULL);
 		ncontent->meal = 0;
+		ncontent->nbr = philo_nbr;
+		ncontent->time = &tmp->timestamp;
 		ncontent->next = NULL;
 		pthread_mutex_init(&ncontent->forks, NULL);
-		pthread_create(&ncontent->philo, NULL, &routine, ncontent);
 	}
 	return (ncontent);
 }
 
-void	ft_lstadd_back(t_philosoph **lst, t_philosoph *new)
+void	ft_lstadd_back(t_philo **lst, t_philo *new)
 {
-	t_philosoph	*i;
+	t_philo	*i;
 
 	i = *lst;
 	if (!i)
@@ -67,28 +69,31 @@ void	ft_lstadd_back(t_philosoph **lst, t_philosoph *new)
 	i->next = new;
 }
 
-int	fill_the_table(s_philosopher *philosophers)
+int	fill_the_table(t_param *philosophers)
 {
-	t_philosoph	*current;
-	t_philosoph *new;
-	int	i;
+	t_philo	*current;
+	t_philo	*new;
+	int		i;
+	int		x;
 
 	i = 0;
+	x = 1;
 	current = NULL;
 	new = NULL;
 	while (i < philosophers->nbr_of_philosophers)
 	{
-		new = ft_lstnew(philosophers->argv);
+		new = ft_lstnew(philosophers->argv, x, philosophers);
 		if (new == NULL)
 			return (printf("Think to sleep and/or eat a good amount of time\n"));
 		ft_lstadd_back(&current, new);
+		x++;
 		i++;
 	}
 	new = current;
 	while (new->next != NULL)
 		new = new->next;
 	new->next = current;
-	philosophers->philosoph = current;
+	philosophers->philo = current;
 	return (0);
 }
 
