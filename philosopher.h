@@ -6,7 +6,7 @@
 /*   By: sboulogn <sboulogn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 16:21:23 by sboulogn          #+#    #+#             */
-/*   Updated: 2023/07/05 16:26:09 by sboulogn         ###   ########.fr       */
+/*   Updated: 2023/07/06 14:34:38 by sboulogn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 typedef struct s_philosoph
 {
 	pthread_t			philo;
-	useconds_t			last_meal;
+	long				last_meal;
 	useconds_t			time_to_eat;
 	useconds_t			time_to_sleep;
 	pthread_mutex_t		forks;

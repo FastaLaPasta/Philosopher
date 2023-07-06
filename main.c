@@ -6,7 +6,7 @@
 /*   By: sboulogn <sboulogn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 17:49:48 by sashaboulog       #+#    #+#             */
-/*   Updated: 2023/07/05 17:12:52 by sboulogn         ###   ########.fr       */
+/*   Updated: 2023/07/06 14:44:20 by sboulogn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	*routine(void *arg)
 		pthread_mutex_lock(&current->next->forks);
 		printf("%ld %d has taken a fork \n", *current->time, current->nbr);
 		printf("%ld %d is eating\n", *current->time, current->nbr);
+		current->last_meal = *current->time;
 		usleep(current->time_to_eat * 1000);
 		pthread_mutex_unlock(&current->forks);
 		pthread_mutex_unlock(&current->next->forks);
@@ -85,33 +86,56 @@ void	launch_the_philosophi(int tmp, t_param *needs)
 	while (tmp > 0)
 	{
 		if (needs->philo->nbr % 3 == 1)
+		{
 			pthread_create(&needs->philo->philo, NULL, &routine, needs->philo);
+			pthread_detach(needs->philo->philo);
+		}
 		else if (needs->philo->nbr % 3 == 2)
 		{
-			usleep(20);
+			usleep(50);
 			pthread_create(&needs->philo->philo, NULL, &routine, needs->philo);
+			pthread_detach(needs->philo->philo);
 		}
 		else if (needs->philo->nbr % 3 == 0)
 		{
-			usleep(40);
+			usleep(100);
 			pthread_create(&needs->philo->philo, NULL, &routine, needs->philo);
+			pthread_detach(needs->philo->philo);
 		}
 		needs->philo = needs->philo->next;
 		tmp--;
-	}
-	tmp = needs->nbr_of_philosophers;
-	while (tmp > 0)
-	{
-		pthread_join(needs->philo->philo, NULL);
-		needs->philo = needs->philo->next;
-		tmp--;
+		// tmp = needs->nbr_of_philosophers;
+		// while (tmp > 0)
+		// {
+		// 	pthread_join(needs->philo->philo, NULL);
+		// 	needs->philo = needs->philo->next;
+		// 	tmp--;
+		// }
 	}
 }
+
+// void	*death_check(void *arg)
+// {
+// 	t_param	*death;
+
+// 	death = arg;
+// 	while (1)
+// 	{
+// 		if ((death->timestamp - death->philo->last_meal) > death->time_to_die)
+// 		{
+// 			printf("%ld %d died\n", death->timestamp, death->philo->nbr);
+// 			return (0);
+// 		}
+// 		death->philo = death->philo->next;
+// 	}
+// 	return (0);
+// }
 
 int	main(int argc, char **argv)
 {
 	t_param		needs;
 	pthread_t	time;
+	// pthread_t	death;
 	int			tmp;
 
 	if (argc == 5 || argc == 6)
@@ -125,9 +149,12 @@ int	main(int argc, char **argv)
 		pthread_detach(time);
 		tmp = needs.nbr_of_philosophers;
 		launch_the_philosophi(tmp, &needs);
+		// pthread_create(&death, NULL, death_check, &needs);
+		// pthread_join(death, NULL);
 	}
 	else
 		printf("Not enough informations to survive, or too much !?\n");
+	// sleep(3);
 	free_the_table(&needs);
 	return (0);
 }

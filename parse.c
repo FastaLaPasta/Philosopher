@@ -6,7 +6,7 @@
 /*   By: sboulogn <sboulogn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 17:58:41 by sashaboulog       #+#    #+#             */
-/*   Updated: 2023/07/05 17:06:39 by sboulogn         ###   ########.fr       */
+/*   Updated: 2023/07/06 14:32:39 by sboulogn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ t_philo	*ft_lstnew(char **argv, int philo_nbr, t_param *tmp)
 		ncontent->nbr = philo_nbr;
 		ncontent->time = &tmp->timestamp;
 		ncontent->next = NULL;
+		ncontent->last_meal = 0;
 		pthread_mutex_init(&ncontent->forks, NULL);
 	}
 	return (ncontent);
