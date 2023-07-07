@@ -6,28 +6,15 @@
 /*   By: sboulogn <sboulogn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 17:58:41 by sashaboulog       #+#    #+#             */
-/*   Updated: 2023/07/06 14:32:39 by sboulogn         ###   ########.fr       */
+/*   Updated: 2023/07/07 17:16:38 by sboulogn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
 
-void	free_the_table(t_param *table)
+void free_the_table(t_param *table)
 {
-	t_philo	*tmp;
-	t_philo	*next;
-
-	tmp = table->philo;
-	while (table->nbr_of_philosophers > 0)
-	{
-		next = tmp->next;
-		pthread_mutex_destroy(&(tmp->forks));
-		if (tmp && tmp != NULL)
-			free(tmp);
-		tmp = next;
-		table->nbr_of_philosophers--;
-	}
-	table->philo = NULL;
+	(void)table;
 }
 
 t_philo	*ft_lstnew(char **argv, int philo_nbr, t_param *tmp)
@@ -50,6 +37,10 @@ t_philo	*ft_lstnew(char **argv, int philo_nbr, t_param *tmp)
 		ncontent->time = &tmp->timestamp;
 		ncontent->next = NULL;
 		ncontent->last_meal = 0;
+		ncontent->general = tmp;
+		ncontent->eat_enough = 0;
+		ncontent->off = &tmp->on;
+		ncontent->time_mutex = &tmp->mutex;
 		pthread_mutex_init(&ncontent->forks, NULL);
 	}
 	return (ncontent);

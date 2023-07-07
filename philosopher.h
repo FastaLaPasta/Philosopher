@@ -6,7 +6,7 @@
 /*   By: sboulogn <sboulogn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 16:21:23 by sboulogn          #+#    #+#             */
-/*   Updated: 2023/07/06 14:34:38 by sboulogn         ###   ########.fr       */
+/*   Updated: 2023/07/07 16:45:29 by sboulogn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,23 @@
 # include <unistd.h>
 # include <sys/time.h>
 
+struct s_philosopher;
+
 typedef struct s_philosoph
 {
-	pthread_t			philo;
-	long				last_meal;
-	useconds_t			time_to_eat;
-	useconds_t			time_to_sleep;
-	pthread_mutex_t		forks;
-	long				*time;
-	int					nbr;
-	int					meal;
-	struct s_philosoph	*next;
+	pthread_t				philo;
+	long					last_meal;
+	int						eat_enough;
+	int						*off;
+	useconds_t				time_to_eat;
+	useconds_t				time_to_sleep;
+	pthread_mutex_t			forks;
+	pthread_mutex_t			*time_mutex;
+	long					*time;
+	int						nbr;
+	int						meal;
+	struct s_philosopher	*general;
+	struct s_philosoph		*next;
 }			t_philo;
 
 typedef struct s_philosopher
@@ -42,6 +48,8 @@ typedef struct s_philosopher
 	suseconds_t		tv_usec;
 	useconds_t		time_to_die;
 	t_philo			*philo;
+	int				on;
+	pthread_mutex_t	mutex;
 }				t_param;
 
 useconds_t		ft_atoi(const char *str);
