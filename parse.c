@@ -6,7 +6,7 @@
 /*   By: sboulogn <sboulogn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 17:58:41 by sashaboulog       #+#    #+#             */
-/*   Updated: 2023/07/07 17:16:38 by sboulogn         ###   ########.fr       */
+/*   Updated: 2023/07/08 12:45:20 by sboulogn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,19 @@
 
 void free_the_table(t_param *table)
 {
-	(void)table;
+	t_philo	*tmp;
+	t_philo	*next;
+
+	tmp = table->philo;
+	while (table->nbr_of_philosophers > 0)
+	{
+		next = tmp->next;
+		pthread_mutex_destroy(&(tmp->forks));
+		if (tmp && tmp != NULL)
+			free(tmp);
+		tmp = next;
+		table->nbr_of_philosophers--;
+	}
 }
 
 t_philo	*ft_lstnew(char **argv, int philo_nbr, t_param *tmp)

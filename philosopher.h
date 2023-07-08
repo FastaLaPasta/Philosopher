@@ -6,7 +6,7 @@
 /*   By: sboulogn <sboulogn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 16:21:23 by sboulogn          #+#    #+#             */
-/*   Updated: 2023/07/07 16:45:29 by sboulogn         ###   ########.fr       */
+/*   Updated: 2023/07/08 11:35:42 by sboulogn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ typedef struct s_philosopher
 	int				nbr_of_philosophers;
 	int				nbr_of_fork;
 	int				nbr_of_meal;
+	int				stop_time;
 	char			**argv;
 	long			timestamp;
 	time_t			tv_sec;		
