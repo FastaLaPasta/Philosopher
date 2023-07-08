@@ -6,7 +6,7 @@
 /*   By: sboulogn <sboulogn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 16:21:23 by sboulogn          #+#    #+#             */
-/*   Updated: 2023/07/08 11:35:42 by sboulogn         ###   ########.fr       */
+/*   Updated: 2023/07/08 17:16:12 by sboulogn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <unistd.h>
 # include <sys/time.h>
 
-struct s_philosopher;
+struct	s_philosopher;
 
 typedef struct s_philosoph
 {
@@ -30,7 +30,6 @@ typedef struct s_philosoph
 	useconds_t				time_to_sleep;
 	pthread_mutex_t			forks;
 	pthread_mutex_t			*time_mutex;
-	long					*time;
 	int						nbr;
 	int						meal;
 	struct s_philosopher	*general;
@@ -44,7 +43,7 @@ typedef struct s_philosopher
 	int				nbr_of_meal;
 	int				stop_time;
 	char			**argv;
-	long			timestamp;
+	struct timeval	timestamp;
 	time_t			tv_sec;		
 	suseconds_t		tv_usec;
 	useconds_t		time_to_die;
@@ -58,5 +57,12 @@ void			ft_lstadd_back(t_philo **lst, t_philo *new);
 void			*routine(void *arg);
 int				fill_the_table(t_param *philosophers);
 void			free_the_table(t_param *table);
+void			ft_usleep(long int time_in_ms, t_param *time);
+long int		time_pass(t_param *time);
+int				check_enough_eat(t_param *general);
+int				check_death(t_philo *philo, int fork);
+int				routine_to_eat(t_philo *philo);
+int				routine_to_sleep_and_think(t_philo *philo);
+int				routine_all(t_philo *philo);
 
 #endif

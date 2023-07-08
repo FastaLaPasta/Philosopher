@@ -6,168 +6,68 @@
 /*   By: sboulogn <sboulogn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 17:49:48 by sashaboulog       #+#    #+#             */
-/*   Updated: 2023/07/08 15:26:56 by sboulogn         ###   ########.fr       */
+/*   Updated: 2023/07/08 17:22:31 by sboulogn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
 
-void *routine(void *arg)
+void	*routine(void *arg)
 {
-	t_philo *philo = arg;
-	t_philo *next_philo = philo->next;
+	t_philo	*philo;
 
-	while (1)
-	{
-		pthread_mutex_lock(philo->time_mutex);
-		if (*philo->off == 0)
-		{
-			pthread_mutex_unlock(philo->time_mutex);
-			return (0);
-		}
-		pthread_mutex_unlock(philo->time_mutex);
-		pthread_mutex_lock(&(philo->forks));
-		pthread_mutex_lock((philo->time_mutex));
-		if (*philo->off == 0)
-		{
-			pthread_mutex_unlock(philo->time_mutex);
-			return (0);
-		}
-		printf("%ld %d has taken a fork\n", *philo->time, philo->nbr);
-		pthread_mutex_unlock((philo->time_mutex));
-		pthread_mutex_lock(&(next_philo->forks));
-		pthread_mutex_lock((philo->time_mutex));
-		if (*philo->off == 0)
-		{
-			pthread_mutex_unlock(philo->time_mutex);
-			return (0);
-		}
-		printf("%ld %d has taken a fork\n", *philo->time, philo->nbr);
-		pthread_mutex_unlock((philo->time_mutex));
-		pthread_mutex_lock((philo->time_mutex));
-		if (*philo->off == 0)
-		{
-			pthread_mutex_unlock(philo->time_mutex);
-			return (0);
-		}
-		printf("%ld %d is eating\n", *philo->time, philo->nbr);
-		philo->last_meal = *philo->time;
-		philo->meal += 1;
-		pthread_mutex_unlock((philo->time_mutex));
-		usleep(philo->time_to_eat * 1000);
-		pthread_mutex_unlock(&(next_philo->forks));
-		pthread_mutex_unlock(&(philo->forks));
-		pthread_mutex_lock((philo->time_mutex));
-		if (*philo->off == 0)
-		{
-			pthread_mutex_unlock(philo->time_mutex);
-			return (0);
-		}
-		printf("%ld %d is sleeping\n", *philo->time, philo->nbr);
-		pthread_mutex_unlock((philo->time_mutex));
-		usleep(philo->time_to_sleep * 1000);
-		pthread_mutex_lock((philo->time_mutex));
-		if (*philo->off == 0)
-		{
-			pthread_mutex_unlock(philo->time_mutex);
-			return (0);
-		}
-		printf("%ld %d is thinking\n", *philo->time, philo->nbr);
-		pthread_mutex_unlock((philo->time_mutex));
-	}
-	return NULL;
+	philo = arg;
+	if (philo->nbr % 2 == 0)
+		ft_usleep(philo->time_to_eat, philo->general);
+	if (routine_all(philo) == 1)
+		return (0);
+	return (NULL);
 }
 
-void *time_pass(void *arg)
+void	*die_or_full(void *arg)
 {
-	t_param *time = arg;
-	struct timeval time_before, time_after;
-	long long elapsed_time;
-
-	gettimeofday(&time_before, NULL);
-	while (1)
-	{
-		gettimeofday(&time_after, NULL);
-		elapsed_time = (time_after.tv_sec - time_before.tv_sec) * 1000 +
-					(time_after.tv_usec - time_before.tv_usec) / 1000;
-		pthread_mutex_lock(&(time->mutex));
-		time->timestamp = elapsed_time;
-		pthread_mutex_unlock(&(time->mutex));
-		pthread_mutex_lock(&(time->mutex));
-		if (time->stop_time == 0)
-		{
-			pthread_mutex_unlock(&(time->mutex));
-			break;
-		}
-		time->timestamp = elapsed_time;
-		pthread_mutex_unlock(&(time->mutex));
-	}
-	return NULL;
-}
-
-void *die_or_full(void *arg)
-{
-	t_param *general = arg;
-	t_philo	*start;
+	t_param	*general;
 	int		eat;
 
-	start = general->philo;
+	general = arg;
 	eat = 0;
 	while (1)
 	{
 		pthread_mutex_lock(&general->mutex);
-		if (general->philo->meal >= general->nbr_of_meal
-			&& general->philo->eat_enough == 0)
-		{
-			eat += 1;
-			general->philo->eat_enough = 1;
-		}
-		if (eat == general->nbr_of_philosophers)
+		eat += check_enough_eat(general);
+		if ((time_pass(general) - general->philo->last_meal
+				> general->time_to_die || eat == general->nbr_of_philosophers))
 		{
 			general->on = 0;
-			printf("================FINISH at %ld================", \
-			general->timestamp);
+			if (eat == general->nbr_of_philosophers)
+				printf("================FINISH at %ld================",
+					time_pass(general));
+			else
+				printf("%ld %d died\n", time_pass(general), general->philo->nbr);
 			pthread_mutex_unlock(&(general->mutex));
-			return NULL;
-		}
-		if ((general->timestamp - general->philo->last_meal)
-			> general->time_to_die)
-		{
-			general->on = 0;
-			printf("%ld %d died\n", general->timestamp, general->philo->nbr);
-			pthread_mutex_unlock(&(general->mutex));
-			return NULL;
+			return (NULL);
 		}
 		general->philo = general->philo->next;
 		pthread_mutex_unlock(&general->mutex);
 	}
-	return NULL;
+	return (NULL);
 }
 
-int fill_arg(t_param *needs, char **argv)
+int	fill_arg(t_param *needs, char **argv)
 {
 	needs->nbr_of_philosophers = ft_atoi(argv[1]);
 	if (needs->nbr_of_philosophers <= 0)
-	{
-		printf("Pas assez de fourchettes pour manger, \
-		ou pas assez de philosophes !\n");
-		return -1;
-	}
+		return (printf("Pas assez de fourchettes pour manger, \
+		ou pas assez de philosophes !\n"));
 	needs->nbr_of_fork = needs->nbr_of_philosophers;
 	needs->time_to_die = ft_atoi(argv[2]);
 	if (needs->time_to_die <= 0)
-	{
-		printf("Temps de vie insuffisant\n");
-		return -1;
-	}
+		return (printf("Temps de vie insuffisant\n"));
 	if (argv[5] != NULL)
 	{
 		needs->nbr_of_meal = ft_atoi(argv[5]);
 		if (needs->nbr_of_meal < 1)
-		{
-			printf("Pas besoin de manger\n");
-			return -1;
-		}
+			return (printf("Pas besoin de manger\n"));
 	}
 	needs->on = 1;
 	needs->stop_time = 1;
@@ -176,18 +76,14 @@ int fill_arg(t_param *needs, char **argv)
 	return (0);
 }
 
-void launch_philosophie(t_param *philo)
+void	launch_philosophie(t_param *philo)
 {
 	pthread_t	end;
-	int i;
+	int			i;
 
 	i = 0;
 	while (i < philo->nbr_of_philosophers)
 	{
-		if (philo->philo->nbr % 3 == 2)
-			usleep(100);
-		if (philo->philo->nbr % 3 == 0)
-			usleep(50);
 		pthread_create(&(philo->philo->philo), NULL, &routine, philo->philo);
 		philo->philo = philo->philo->next;
 		i++;
@@ -203,27 +99,24 @@ void launch_philosophie(t_param *philo)
 	pthread_mutex_lock(&(philo->mutex));
 	philo->stop_time = 0;
 	pthread_mutex_unlock(&(philo->mutex));
-	usleep(50);
+	ft_usleep(50, philo);
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	t_param		general;
-	pthread_t	time_thread;
-	
 
 	if (argc != 5 && argc != 6)
 	{
 		printf("don't forget any settings\n");
-		return -1;
+		return (-1);
 	}
 	if (fill_arg(&general, argv) != 0)
-		return -1;
+		return (-1);
 	if (fill_the_table(&general) != 0)
-		return -1;
+		return (-1);
+	gettimeofday(&general.timestamp, NULL);
 	pthread_mutex_init(&(general.mutex), NULL);
-	pthread_create(&time_thread, NULL, time_pass, &general);
-	pthread_detach(time_thread);
 	launch_philosophie(&general);
 	free_the_table(&general);
 	return (0);
