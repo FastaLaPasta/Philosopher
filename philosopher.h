@@ -6,7 +6,7 @@
 /*   By: sboulogn <sboulogn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 16:21:23 by sboulogn          #+#    #+#             */
-/*   Updated: 2023/07/08 17:16:12 by sboulogn         ###   ########.fr       */
+/*   Updated: 2023/07/09 14:55:50 by sboulogn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,5 +64,6 @@ int				check_death(t_philo *philo, int fork);
 int				routine_to_eat(t_philo *philo);
 int				routine_to_sleep_and_think(t_philo *philo);
 int				routine_all(t_philo *philo);
+void			printf_end(t_param *general);
 
 #endif

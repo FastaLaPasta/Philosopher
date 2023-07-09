@@ -4,7 +4,7 @@ SRCS = main.c parse.c utils.c routine_utils.c
 			
 OBJ = $(SRCS:.c=.o)
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g3 -o3 #-fsanitize=thread
+CFLAGS = -Wall -Wextra -Werror #-g3 -o3 -fsanitize=thread
 
 all: $(NAME)
 

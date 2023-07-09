@@ -6,7 +6,7 @@
 /*   By: sboulogn <sboulogn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 16:45:10 by sboulogn          #+#    #+#             */
-/*   Updated: 2023/07/08 17:20:10 by sboulogn         ###   ########.fr       */
+/*   Updated: 2023/07/09 13:02:00 by sboulogn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,13 @@ int	routine_all(t_philo *philo)
 		printf("%ld %d has taken a fork\n", time_pass(philo->general),
 			philo->nbr);
 		pthread_mutex_unlock((philo->time_mutex));
-		pthread_mutex_lock(&(philo->next->forks));
-		if (routine_to_eat(philo) == 1)
-			return (1);
-		pthread_mutex_unlock(&(philo->next->forks));
+		if (philo->general->nbr_of_philosophers > 1)
+		{
+			pthread_mutex_lock(&(philo->next->forks));
+			if (routine_to_eat(philo) == 1)
+				return (1);
+			pthread_mutex_unlock(&(philo->next->forks));
+		}
 		pthread_mutex_unlock(&(philo->forks));
 		if (routine_to_sleep_and_think(philo) == 1)
 			return (1);

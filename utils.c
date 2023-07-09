@@ -6,7 +6,7 @@
 /*   By: sboulogn <sboulogn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 16:17:15 by sboulogn          #+#    #+#             */
-/*   Updated: 2023/07/08 17:15:02 by sboulogn         ###   ########.fr       */
+/*   Updated: 2023/07/09 15:02:58 by sboulogn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,13 @@ long int	time_pass(t_param *time)
 void	ft_usleep(long int time_in_ms, t_param *time)
 {
 	long int	start_time;
+	long int	time_to_wait;
 
 	start_time = 0;
+	time_to_wait = time_in_ms / 10;
 	start_time = time_pass(time);
 	while ((time_pass(time) - start_time) < time_in_ms)
-		usleep(time_in_ms / 10);
+		usleep(time_to_wait);
 }
 
 int	check_enough_eat(t_param *general)
@@ -61,4 +63,10 @@ int	check_death(t_philo *philo, int fork)
 		return (1);
 	}
 	return (0);
+}
+
+void	printf_end(t_param *general)
+{
+	printf("================FINISH at %ld================",
+		time_pass(general));
 }

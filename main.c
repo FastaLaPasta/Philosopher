@@ -6,7 +6,7 @@
 /*   By: sboulogn <sboulogn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 17:49:48 by sashaboulog       #+#    #+#             */
-/*   Updated: 2023/07/08 17:22:31 by sboulogn         ###   ########.fr       */
+/*   Updated: 2023/07/09 15:04:59 by sboulogn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,7 @@ void	*die_or_full(void *arg)
 		{
 			general->on = 0;
 			if (eat == general->nbr_of_philosophers)
-				printf("================FINISH at %ld================",
-					time_pass(general));
+				printf_end(general);
 			else
 				printf("%ld %d died\n", time_pass(general), general->philo->nbr);
 			pthread_mutex_unlock(&(general->mutex));
