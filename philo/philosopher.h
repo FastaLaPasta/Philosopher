@@ -6,7 +6,7 @@
 /*   By: sboulogn <sboulogn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 16:21:23 by sboulogn          #+#    #+#             */
-/*   Updated: 2023/07/13 11:33:41 by sboulogn         ###   ########.fr       */
+/*   Updated: 2023/07/13 12:34:34 by sboulogn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,5 @@ int				routine_to_eat(t_philo *philo);
 int				routine_to_sleep_and_think(t_philo *philo);
 int				routine_all(t_philo *philo);
 void			printf_end(t_param *general);
-void			ft_putstr(char *str);
-void			ft_putnbr(int n);
-void			print_actions(int time, int nbr, char *str);
 
 #endif
